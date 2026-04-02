@@ -51,6 +51,7 @@
             <li><a href="#how-it-works">Process</a></li>
             <li><a href="#safety">Safety</a></li>
             <li><a href="#faq">FAQ</a></li>
+            <li><a href="#pilot-registration">Pilots</a></li>
             <li><a href="#contact" class="nav-cta">Get a Quote</a></li>
           </ul>
         </nav>
@@ -329,6 +330,22 @@
       </div>
     </div>
   </section>
+
+
+  <!-- ══════════════════════════════════════════
+       PRICING STRIP
+  ══════════════════════════════════════════ -->
+  <div class="pricing-strip" role="region" aria-label="Pricing information">
+    <div class="container">
+      <div class="pricing-strip-inner">
+        <span class="pricing-strip-pill">Competitive Rates</span>
+        <span class="pricing-strip-text">
+          <strong>Transparent, itemised quotes</strong> — no hidden fees, fair pricing across all Australian routes.
+        </span>
+        <a href="#contact" class="btn btn-secondary btn-sm">Get a Quote</a>
+      </div>
+    </div>
+  </div>
 
 
   <!-- ══════════════════════════════════════════
@@ -853,6 +870,70 @@
 
 
   <!-- ══════════════════════════════════════════
+       PILOT REGISTRATION
+  ══════════════════════════════════════════ -->
+  <section id="pilot-registration" class="section pilot-section" aria-labelledby="pilot-heading">
+    <div class="container">
+      <div class="pilot-inner">
+
+        <!-- Left: Text + CTAs -->
+        <div class="pilot-content reveal-left">
+          <div class="section-badge pilot-badge">Ferry Pilot Registration</div>
+          <h2 id="pilot-heading" class="pilot-heading">Want to Ferry Aircraft<br>Across Australia?</h2>
+          <p class="pilot-subheading">
+            We welcome expressions of interest from suitably qualified pilots interested in ferry and repositioning operations across Australia. If you're looking to be considered for future ferry opportunities, register your details here.
+          </p>
+          <ul class="pilot-perks">
+            <li>Australia-wide ferry and repositioning opportunities</li>
+            <li>Expressions of interest welcome from qualified GA pilots</li>
+            <li>Practical flying. Professional coordination.</li>
+            <li>Join a growing ferry pilot network</li>
+          </ul>
+          <div class="pilot-ctas">
+            <button class="btn-pilot-primary" id="openPilotModal"
+                    aria-haspopup="dialog" aria-controls="pilotModal">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+              </svg>
+              Register Interest
+            </button>
+            <a href="#contact" class="btn btn-outline">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+              Contact Us
+            </a>
+          </div>
+          <p class="pilot-disclaimer">
+            Registering your interest does not guarantee engagement, employment, or any ferry assignment. All expressions of interest are reviewed and suitable candidates contacted as opportunities arise.
+          </p>
+        </div>
+
+        <!-- Right: Animated Route Graphic -->
+        <div class="pilot-animation reveal-right">
+          <div class="pilot-anim-wrap">
+            <svg id="pilotRouteSvg" viewBox="0 0 420 300" xmlns="http://www.w3.org/2000/svg"
+                 aria-hidden="true">
+              <!-- Built by script.js buildPilotAnimation() -->
+            </svg>
+            <div class="pilot-network-badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+              </svg>
+              Join Our Pilot Network
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════
        CONTACT FORM
   ══════════════════════════════════════════ -->
   <section id="contact" class="section contact-section">
@@ -1006,6 +1087,115 @@
 
 
   <!-- ══════════════════════════════════════════
+       PILOT REGISTRATION MODAL
+  ══════════════════════════════════════════ -->
+  <div id="pilotModal" class="pilot-modal-overlay" role="dialog" aria-modal="true"
+       aria-labelledby="pilotModalTitle" hidden>
+    <div class="pilot-modal">
+      <button class="pilot-modal-close" id="closePilotModal" aria-label="Close pilot registration form">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+
+      <div class="pilot-modal-header">
+        <div class="section-badge pilot-badge">Pilot Expression of Interest</div>
+        <h3 id="pilotModalTitle">Register as a Ferry Pilot</h3>
+        <p>Fill in your details and we'll be in touch if suitable ferry opportunities arise. Submitting this form does not guarantee any engagement.</p>
+      </div>
+
+      <form id="pilotForm" novalidate>
+        <!-- Web3Forms: replace access_key with your key from https://web3forms.com/ -->
+        <input type="hidden" name="access_key" value="YOUR_ACCESS_KEY_HERE" />
+        <input type="hidden" name="subject" value="Ferry Pilots Australia — Pilot Expression of Interest" />
+        <input type="hidden" name="from_name" value="Ferry Pilots Australia Website" />
+        <input type="hidden" name="redirect" value="false" />
+        <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" autocomplete="off" />
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="pilotName">Full Name <span class="required">*</span></label>
+            <input class="form-input" type="text" id="pilotName" name="Full Name"
+                   placeholder="Jane Smith" required autocomplete="name" />
+            <span class="form-error-msg" role="alert"></span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="pilotEmail">Email Address <span class="required">*</span></label>
+            <input class="form-input" type="email" id="pilotEmail" name="Email"
+                   placeholder="jane@example.com" required autocomplete="email" />
+            <span class="form-error-msg" role="alert"></span>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="pilotPhone">Phone Number</label>
+            <input class="form-input" type="tel" id="pilotPhone" name="Phone"
+                   placeholder="0400 000 000" autocomplete="tel" />
+            <span class="form-error-msg" role="alert"></span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="pilotLicence">Licence Type <span class="required">*</span></label>
+            <select class="form-select" id="pilotLicence" name="Licence Type" required>
+              <option value="">— Select licence —</option>
+              <option>Private Pilot Licence (PPL)</option>
+              <option>Commercial Pilot Licence (CPL)</option>
+              <option>Air Transport Pilot Licence (ATPL)</option>
+              <option>Recreational Pilot Licence (RPL)</option>
+              <option>Student Pilot Licence (SPL)</option>
+            </select>
+            <span class="form-error-msg" role="alert"></span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="pilotRatings">Ratings &amp; Experience <span class="required">*</span></label>
+          <input class="form-input" type="text" id="pilotRatings" name="Ratings and Experience"
+                 placeholder="e.g. IFR, Multi-Engine, 500 hrs TT, C172 / PA28 / BE58…" required />
+          <span class="form-error-msg" role="alert"></span>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="pilotLocation">Current Location <span class="required">*</span></label>
+            <input class="form-input" type="text" id="pilotLocation" name="Current Location"
+                   placeholder="e.g. Sydney, NSW" required />
+            <span class="form-error-msg" role="alert"></span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="pilotAvailability">Availability</label>
+            <input class="form-input" type="text" id="pilotAvailability" name="Availability"
+                   placeholder="e.g. Weekends, Flexible, Full-time" />
+            <span class="form-error-msg" role="alert"></span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="pilotMessage">Additional Notes</label>
+          <textarea class="form-textarea" id="pilotMessage" name="Message"
+                    placeholder="Tell us a bit more about your background, aircraft types flown, or any other relevant details…"></textarea>
+          <span class="form-error-msg" role="alert"></span>
+        </div>
+
+        <button type="submit" class="form-submit">
+          <span class="submit-text">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+            </svg>
+            Submit Expression of Interest
+          </span>
+          <div class="spinner" aria-hidden="true"></div>
+        </button>
+
+        <div id="pilotFormStatus" class="form-status" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════
        FOOTER
   ══════════════════════════════════════════ -->
   <footer class="site-footer" aria-label="Site footer">
@@ -1061,6 +1251,7 @@
             <a href="#aircraft">Aircraft Capability</a>
             <a href="#how-it-works">Our Process</a>
             <a href="#safety">Safety Standards</a>
+            <a href="#pilot-registration">Pilot Network</a>
             <a href="#testimonials">Client Reviews</a>
             <a href="#faq">FAQ</a>
           </nav>

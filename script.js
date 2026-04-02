@@ -785,6 +785,381 @@ function initNavHighlight() {
 }
 
 /* ============================================================
+   PILOT ROUTE ANIMATION
+   ============================================================ */
+
+function buildPilotAnimation() {
+  const svg = document.getElementById('pilotRouteSvg');
+  if (!svg) return;
+
+  const W = 420, H = 300;
+
+  // Waypoints for Perth → Alice Springs → Sydney (scaled to 420×300 viewBox)
+  const PILOT_WPS = [
+    { x: 51,  y: 183, label: 'PER' },
+    { x: 214, y: 122, label: 'ASP' },
+    { x: 370, y: 198, label: 'SYD' }
+  ];
+
+  // Single smooth cubic bezier route
+  const ROUTE_D = 'M 51,183 C 132,88 292,83 370,198';
+
+  // Defs: glow filter
+  const defs = svgEl('defs');
+  const filt = svgEl('filter', { id: 'pilotGlow', x: '-40%', y: '-40%', width: '180%', height: '180%' });
+  const fblur = svgEl('feGaussianBlur', { stdDeviation: '2.5', result: 'blur' });
+  const fmerge = svgEl('feMerge');
+  [svgEl('feMergeNode', { in: 'blur' }), svgEl('feMergeNode', { in: 'SourceGraphic' })]
+    .forEach(n => fmerge.appendChild(n));
+  filt.appendChild(fblur); filt.appendChild(fmerge);
+  defs.appendChild(filt);
+  svg.appendChild(defs);
+
+  // Background
+  svg.appendChild(svgEl('rect', { width: W, height: H, fill: '#0d1525' }));
+
+  // Grid lines
+  const gridG = svgEl('g');
+  for (let x = 50; x < W; x += 50)
+    gridG.appendChild(svgEl('line', { x1: x, y1: 0, x2: x, y2: H,
+      stroke: 'rgba(90,171,240,0.06)', 'stroke-width': '0.5' }));
+  for (let y = 50; y < H; y += 50)
+    gridG.appendChild(svgEl('line', { x1: 0, y1: y, x2: W, y2: y,
+      stroke: 'rgba(90,171,240,0.06)', 'stroke-width': '0.5' }));
+  svg.appendChild(gridG);
+
+  // Decorative coordinate text
+  const coordG = svgEl('g', { opacity: '0.28' });
+  [
+    ['113°E', 18, 293], ['134°E', 207, 293], ['154°E', 398, 293],
+    ['12°S',  W - 8, 28], ['23°S',  W - 8, 120], ['34°S',  W - 8, 198]
+  ].forEach(([t, x, y]) => {
+    const el = svgEl('text', {
+      x, y, fill: '#8a97aa', 'font-size': '7.5',
+      'font-family': 'Inter,sans-serif', 'text-anchor': 'middle'
+    });
+    el.textContent = t;
+    coordG.appendChild(el);
+  });
+  svg.appendChild(coordG);
+
+  // Australia outline (faint geographic context)
+  const ausOutlineP = coordsToPath(AUS_OUTLINE_COORDS, W, H, 20, 18);
+  svg.appendChild(svgEl('path', {
+    d: ausOutlineP,
+    fill: 'rgba(22,42,72,0.3)',
+    stroke: 'rgba(90,171,240,0.13)',
+    'stroke-width': '1', 'stroke-linejoin': 'round'
+  }));
+  const tasOutlineP = coordsToPath(TASMANIA_COORDS, W, H, 20, 18);
+  svg.appendChild(svgEl('path', {
+    d: tasOutlineP,
+    fill: 'rgba(22,42,72,0.3)',
+    stroke: 'rgba(90,171,240,0.13)',
+    'stroke-width': '1'
+  }));
+
+  // Route glow shadow
+  svg.appendChild(svgEl('path', {
+    d: ROUTE_D, fill: 'none',
+    stroke: 'rgba(90,171,240,0.12)', 'stroke-width': '10', 'stroke-linecap': 'round'
+  }));
+
+  // Dashed route path (visible, low opacity — revealed by draw path)
+  const routePath = svgEl('path', {
+    id: 'pilotRoute', d: ROUTE_D, fill: 'none',
+    stroke: 'rgba(90,171,240,0.55)', 'stroke-width': '1.5',
+    'stroke-linecap': 'round', 'stroke-dasharray': '6 4'
+  });
+  svg.appendChild(routePath);
+
+  // Draw-in animation path (solid, animates stroke-dashoffset to reveal route)
+  const drawPath = svgEl('path', {
+    d: ROUTE_D, fill: 'none',
+    stroke: 'rgba(90,171,240,0.45)', 'stroke-width': '2', 'stroke-linecap': 'round'
+  });
+  svg.appendChild(drawPath);
+
+  // City groups (hidden until animation)
+  const cityG = svgEl('g');
+  svg.appendChild(cityG);
+  const cityGroups = [];
+  PILOT_WPS.forEach((wp, i) => {
+    const g = svgEl('g');
+    g.style.opacity = '0';
+    g.style.transition = `opacity 0.5s ease ${1.2 + i * 0.25}s`;
+
+    // Pulse ring
+    const ring = svgEl('circle', { cx: wp.x, cy: wp.y, r: 5, fill: 'none',
+      stroke: 'rgba(90,171,240,0.65)', 'stroke-width': '1' });
+    ring.innerHTML = `<animate attributeName="r" from="5" to="17" dur="2.8s"
+      repeatCount="indefinite" begin="${i * 0.65}s"/>
+      <animate attributeName="opacity" from="0.65" to="0" dur="2.8s"
+      repeatCount="indefinite" begin="${i * 0.65}s"/>`;
+    g.appendChild(ring);
+
+    // Inner dot
+    g.appendChild(svgEl('circle', { cx: wp.x, cy: wp.y, r: 4,
+      fill: '#5aabf0', filter: 'url(#pilotGlow)' }));
+
+    // Label
+    const txOff = i === 0 ? 9 : i === 2 ? -9 : 0;
+    const anchor = i === 0 ? 'start' : i === 2 ? 'end' : 'middle';
+    const tyOff = i === 1 ? -11 : 16;
+    const lbl = svgEl('text', {
+      x: wp.x + txOff, y: wp.y + tyOff,
+      fill: '#b8c4d4', 'font-size': '10.5',
+      'font-family': 'Inter,sans-serif', 'font-weight': '600',
+      'text-anchor': anchor, 'letter-spacing': '0.04em'
+    });
+    lbl.textContent = wp.label;
+    g.appendChild(lbl);
+
+    cityG.appendChild(g);
+    cityGroups.push(g);
+  });
+
+  // Contrail path (drawn behind plane)
+  const contrailPath = svgEl('path', {
+    fill: 'none', stroke: 'rgba(90,171,240,0.22)',
+    'stroke-width': '2', 'stroke-linecap': 'round'
+  });
+  svg.appendChild(contrailPath);
+
+  // Plane group
+  const planeG = svgEl('g', { id: 'pilotPlane', opacity: '0' });
+  planeG.appendChild(svgEl('polygon', { points: '0,-3 13,0 0,3 3,0',
+    fill: '#7eb8ff', filter: 'url(#pilotGlow)' }));
+  planeG.appendChild(svgEl('polygon', { points: '1,-3 7.5,-9.5 9,-6.5 3,-1.5',
+    fill: '#7eb8ff', opacity: '0.85' }));
+  planeG.appendChild(svgEl('polygon', { points: '1,3 7.5,9.5 9,6.5 3,1.5',
+    fill: '#7eb8ff', opacity: '0.85' }));
+  svg.appendChild(planeG);
+
+  // Store references for later animation trigger
+  svg._routePath  = routePath;
+  svg._drawPath   = drawPath;
+  svg._planeG     = planeG;
+  svg._contrailP  = contrailPath;
+  svg._cityGroups = cityGroups;
+  svg._animated   = false;
+}
+
+function startPilotAnimation(svg) {
+  if (!svg || svg._animated) return;
+  svg._animated = true;
+
+  const { _routePath: rp, _drawPath: dp, _planeG: pg,
+          _contrailP: cp, _cityGroups: cg } = svg;
+  if (!rp || !dp) return;
+
+  // Reveal city markers
+  cg.forEach(g => { g.style.opacity = '1'; });
+
+  // Animate route draw-in via stroke-dashoffset
+  const len = rp.getTotalLength();
+  dp.style.strokeDasharray = len;
+  dp.style.strokeDashoffset = len;
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      dp.style.transition = 'stroke-dashoffset 2s ease 0.3s';
+      dp.style.strokeDashoffset = '0';
+    });
+  });
+
+  // Launch plane after route finishes drawing
+  setTimeout(() => {
+    pg.style.opacity = '1';
+    animatePilotPlane(rp, pg, cp, len);
+  }, 2600);
+}
+
+function animatePilotPlane(routePath, planeG, contrailPath, totalLen) {
+  const DURATION = 5200;
+  const PAUSE    = 1000;
+  let startTime  = null;
+  let trail      = [];
+
+  function frame(ts) {
+    if (!startTime) startTime = ts;
+    const elapsed  = ts - startTime;
+    const cycle    = DURATION + PAUSE;
+    const progress = elapsed % cycle;
+
+    if (progress >= DURATION) {
+      // Pause phase — reset trail, wait
+      trail = [];
+      contrailPath.setAttribute('d', '');
+      requestAnimationFrame(frame);
+      return;
+    }
+
+    const t      = progress / DURATION;
+    const eased  = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+    const dist   = Math.min(eased * totalLen, totalLen - 0.5);
+    const pt     = routePath.getPointAtLength(dist);
+    const pt2    = routePath.getPointAtLength(Math.min(dist + 2, totalLen));
+    const angle  = Math.atan2(pt2.y - pt.y, pt2.x - pt.x) * 180 / Math.PI;
+
+    planeG.setAttribute('transform',
+      `translate(${pt.x.toFixed(1)},${pt.y.toFixed(1)}) rotate(${angle.toFixed(1)})`);
+
+    // Rolling contrail
+    trail.push({ x: pt.x, y: pt.y });
+    if (trail.length > 30) trail.shift();
+    if (trail.length > 1) {
+      contrailPath.setAttribute('d',
+        'M ' + trail.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' L '));
+    }
+
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+
+function initPilotSectionObserver() {
+  const section = document.getElementById('pilot-registration');
+  const svg     = document.getElementById('pilotRouteSvg');
+  if (!section || !svg) return;
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        startPilotAnimation(svg);
+        obs.unobserve(section);
+      }
+    });
+  }, { threshold: 0.25 });
+
+  obs.observe(section);
+}
+
+/* ============================================================
+   PILOT MODAL
+   ============================================================ */
+
+function initPilotModal() {
+  const openBtn  = document.getElementById('openPilotModal');
+  const closeBtn = document.getElementById('closePilotModal');
+  const modal    = document.getElementById('pilotModal');
+  if (!openBtn || !modal) return;
+
+  function openModal() {
+    modal.removeAttribute('hidden');
+    document.body.style.overflow = 'hidden';
+    // Move focus into modal
+    const firstFocusable = modal.querySelector('button, [href], input, select, textarea');
+    if (firstFocusable) firstFocusable.focus();
+  }
+
+  function closeModal() {
+    modal.setAttribute('hidden', '');
+    document.body.style.overflow = '';
+    openBtn.focus();
+  }
+
+  openBtn.addEventListener('click', openModal);
+  if (closeBtn) closeBtn.addEventListener('click', closeModal);
+
+  // Close on overlay click
+  modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+
+  // Close on Escape
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && !modal.hasAttribute('hidden')) closeModal();
+  });
+
+  // Trap focus within modal
+  modal.addEventListener('keydown', e => {
+    if (e.key !== 'Tab') return;
+    const focusable = Array.from(
+      modal.querySelectorAll('button:not([disabled]), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')
+    ).filter(el => !el.closest('[hidden]'));
+    if (!focusable.length) return;
+    const first = focusable[0], last = focusable[focusable.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault(); last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault(); first.focus();
+    }
+  });
+}
+
+/* ============================================================
+   PILOT REGISTRATION FORM
+   ============================================================ */
+
+function initPilotForm() {
+  const form   = document.getElementById('pilotForm');
+  if (!form) return;
+
+  const submitBtn  = form.querySelector('.form-submit');
+  const formStatus = document.getElementById('pilotFormStatus');
+
+  function showErr(input, msg) {
+    input.classList.add('error');
+    const el = input.parentElement.querySelector('.form-error-msg');
+    if (el) { el.textContent = msg; el.classList.add('show'); }
+  }
+  function clearErr(input) {
+    input.classList.remove('error');
+    const el = input.parentElement.querySelector('.form-error-msg');
+    if (el) el.classList.remove('show');
+  }
+  function isValidEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+
+  function validate() {
+    let ok = true;
+    form.querySelectorAll('[required]').forEach(inp => {
+      clearErr(inp);
+      if (!inp.value.trim()) { showErr(inp, 'This field is required.'); ok = false; }
+    });
+    const em = form.querySelector('#pilotEmail');
+    if (em && em.value.trim() && !isValidEmail(em.value.trim())) {
+      showErr(em, 'Please enter a valid email address.'); ok = false;
+    }
+    return ok;
+  }
+
+  form.querySelectorAll('[required], #pilotEmail').forEach(inp => {
+    inp.addEventListener('blur', () => { if (inp.value.trim()) clearErr(inp); });
+  });
+
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    if (formStatus) { formStatus.className = 'form-status'; formStatus.textContent = ''; }
+    if (!validate()) return;
+
+    submitBtn.classList.add('loading');
+    submitBtn.disabled = true;
+
+    try {
+      const res  = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST', body: new FormData(form)
+      });
+      const json = await res.json();
+      if (json.success) {
+        formStatus.className = 'form-status success';
+        formStatus.textContent =
+          '✓ Expression of interest submitted! We\'ll be in touch if suitable opportunities arise.';
+        form.reset();
+      } else {
+        throw new Error(json.message || 'Submission failed');
+      }
+    } catch {
+      if (formStatus) {
+        formStatus.className = 'form-status error';
+        formStatus.textContent =
+          '✗ Something went wrong. Please contact us directly on 0414 250 344.';
+      }
+    } finally {
+      submitBtn.classList.remove('loading');
+      submitBtn.disabled = false;
+    }
+  });
+}
+
+/* ============================================================
    INIT ON DOM READY
    ============================================================ */
 
@@ -801,9 +1176,13 @@ document.addEventListener('DOMContentLoaded', () => {
   initFAQ();
   initContactForm();
   initFloatingButtons();
+  initPilotModal();
+  initPilotForm();
 
   // Build SVG maps
   buildHeroMap();
   buildCoverageMap();
   initCoverageObserver();
+  buildPilotAnimation();
+  initPilotSectionObserver();
 });
