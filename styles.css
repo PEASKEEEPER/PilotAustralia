@@ -1366,6 +1366,7 @@ p { color: var(--grey-light); }
   to { transform: rotate(360deg); }
 }
 @keyframes radarPulse {
+  /* SVG 'r' (radius) is unitless per SVG spec — valid in CSS animations targeting SVG elements */
   0%   { r: 5;  opacity: 0.9; }
   100% { r: 14; opacity: 0;   }
 }
