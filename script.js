@@ -10,8 +10,8 @@
    ============================================================ */
 
 const CITIES = {
-  sydney:      { x: 626, y: 389, label: 'Sydney',        abbr: 'SYD' },
-  melbourne:   { x: 528, y: 449, label: 'Melbourne',     abbr: 'MEL' },
+  sydney:      { x: 528, y: 449, label: 'Sydney',        abbr: 'SYD' },
+  melbourne:   { x: 626, y: 389, label: 'Melbourne',     abbr: 'MEL' },
   brisbane:    { x: 654, y: 290, label: 'Brisbane',      abbr: 'BNE' },
   perth:       { x:  75, y: 359, label: 'Perth',         abbr: 'PER' },
   adelaide:    { x: 430, y: 405, label: 'Adelaide',      abbr: 'ADL' },
