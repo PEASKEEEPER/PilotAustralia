@@ -355,31 +355,20 @@ p { color: var(--grey-light); }
 .hero-stat {
   display: flex;
   flex-direction: column;
+  gap: 0.2rem;
+  min-width: 160px;
 }
-.stat-number-wrap {
-  display: flex;
-  align-items: baseline;
-  gap: 0.1em;
-}
-.stat-number {
+.hero-feat-head {
   font-family: var(--font-heading);
-  font-size: 2.2rem;
-  font-weight: 700;
-  color: var(--white);
-  line-height: 1;
-}
-.stat-suffix {
-  font-family: var(--font-heading);
-  font-size: 1.4rem;
+  font-size: 0.95rem;
   font-weight: 600;
   color: var(--sky-bright);
+  line-height: 1.2;
 }
-.stat-label {
+.hero-feat-body {
   font-size: 0.8rem;
   color: var(--grey);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-weight: 500;
+  line-height: 1.4;
 }
 .hero-scroll {
   position: absolute;
@@ -766,7 +755,7 @@ p { color: var(--grey-light); }
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 2rem;
-  text-align: center;
+  text-align: left;
   position: relative;
 }
 .safety-stats-panel::before {
@@ -777,13 +766,18 @@ p { color: var(--grey-light); }
   background: linear-gradient(90deg, var(--sky), var(--amber));
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
 }
-.safety-stat-item .stat-number {
-  font-size: 2.5rem;
+.safety-feat-title {
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 600;
   display: block;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.5rem;
 }
-.safety-stat-item .stat-label {
-  font-size: 0.82rem;
+.safety-feat-text {
+  font-size: 0.84rem;
+  color: var(--grey-light);
+  line-height: 1.5;
+  display: block;
 }
 
 /* ---------- Who We Help ---------- */
