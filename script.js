@@ -10,16 +10,16 @@
    ============================================================ */
 
 const CITIES = {
-  sydney:      { x: 638, y: 399, label: 'Sydney',        abbr: 'SYD' },
-  melbourne:   { x: 542, y: 457, label: 'Melbourne',     abbr: 'MEL' },
-  brisbane:    { x: 660, y: 300, label: 'Brisbane',      abbr: 'BNE' },
-  perth:       { x:  86, y: 370, label: 'Perth',         abbr: 'PER' },
-  adelaide:    { x: 440, y: 414, label: 'Adelaide',      abbr: 'ADL' },
-  darwin:      { x: 309, y:  68, label: 'Darwin',        abbr: 'DRW' },
+  sydney:      { x: 626, y: 389, label: 'Sydney',        abbr: 'SYD' },
+  melbourne:   { x: 528, y: 449, label: 'Melbourne',     abbr: 'MEL' },
+  brisbane:    { x: 654, y: 290, label: 'Brisbane',      abbr: 'BNE' },
+  perth:       { x:  75, y: 359, label: 'Perth',         abbr: 'PER' },
+  adelaide:    { x: 430, y: 405, label: 'Adelaide',      abbr: 'ADL' },
+  darwin:      { x: 308, y:  59, label: 'Darwin',        abbr: 'DRW' },
   cairns:      { x: 542, y: 127, label: 'Cairns',        abbr: 'CNS' },
-  alice:       { x: 356, y: 231, label: 'Alice Springs', abbr: 'ASP' },
-  hobart:      { x: 566, y: 528, label: 'Hobart',        abbr: 'HBA' },
-  townsville:  { x: 570, y: 173, label: 'Townsville',    abbr: 'TSV' }
+  alice:       { x: 356, y: 232, label: 'Alice Springs', abbr: 'ASP' },
+  hobart:      { x: 565, y: 528, label: 'Hobart',        abbr: 'HBA' },
+  townsville:  { x: 558, y: 164, label: 'Townsville',    abbr: 'TSV' }
 };
 
 // Australia outline path points (lon, lat geographic coordinates)
